@@ -1,44 +1,81 @@
 ﻿
 
 #include <iostream>
+#include<fstream>
+#include<string>
 using namespace std;
 #include "Tasks.h"
 #include "Examples.h"
 #include<Windows.h>
-
+#include<bitset>
 
 /// @brief 
 /// @return 
 int main()
 {
     SetConsoleOutputCP(1251);
-    return 0;
-}
-void task1() {
- //Обчислення виразу використовуючи тільки побітові операції.
-//Вираз: (127*а+32*с)/(4096)-d*1200+b*131.
-    int a, b, c, d, x, y;
-    cout << "Приклад обчислення виразу використовуючи тільки побітові операції\n";
-    cout << "Приклад: y=((127*a+32*c)/(4096))-d*1200+b*131\n";
-    cout << "Введіть a,b: " << endl;
-    cin >> a >> b;
-    cout << "Введіть c,d: " << endl;
-    cin >> c >> d;
-    x = ((((a << 7) - a) + (c << 5)) >> 12) - (d << 10) + (d << 7) + (d << 5) + (d << 4) + ((b << 7) + (b << 1) + b);
-    y = ((127 * a + 32 * c) / (4096)) - d * 1200 + b * 131;
-}
-void task2()
-{
-    // Задано 8 рядків тексту. У рядку до 8 символів. Доповнити пробілами рядки до 8 символів.
-    //Шифрувати тексти таким чином, щоб кожний символ тексту записувався у два байти.Два байти
-    // мають таку структуру:
-    //труктуру:
-  //  у бітах 0 - 2 знаходиться номер рядка символу(3 біти),
-     //   у бітах 3 - 6 молодша частина ASCII - коду символу(4 біти),
-     //   7 біт – біт парності перших двох полів(1 біт)
-     //   у бітах 8 - 11 старша частина ASCII - коду символу(4 біти),
-     //   у бітах 12 - 14 позиція символу в рядку(3 біти),
-    //    15 біт - біт парності попередніх двох полів(1 біт).
-    cout << " Data encryption using bitwise operations  \n";
+    cout << "OOP. Template for Laboratory work #2.\n ";
 
+    char ch = '5';
+    do {
+        system("cls");
+        MenuTask();
+        ch = cin.get();
+
+        cin.get();
+
+        switch (ch) {
+        case '1': task1();       break;
+        case '2': task2();       break;
+        case '3': task3();       break;
+        case '4': task4();       break;
+        case '5': Examples();    break;
+        case '6': return 0;
+        }
+        cout << "Press any key and enter\n";
+        ch = cin.get();
+    } while (ch = !6);
+    std::string text[8];
+    unsigned short rez[8][8];
+
+    // Введення рядків
+    for (int i = 0; i < 8; i++) {
+        std::cout << "row " << i + 1 << ": ";
+        std::getline(std::cin, text[i]);
+
+        // Доповнення рядків пробілами до 8 символів
+        while (text[i].length() < 8) {
+            text[i] += ' ';
+        }
+    }
+
+    // Шифрування тексту
+    encrypt(text, rez);
+
+    // Запис у бінарний файл
+    std::ofstream outputFile("binary.dat", std::ios::binary);
+    if (!outputFile) {
+        std::cerr << "error open file." << std::endl;
+        return 1;
+    }
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            outputFile.write(reinterpret_cast<const char*>(&rez[i][j]), sizeof(rez[i][j]));
+        }
+    }
+
+    outputFile.close();
+
+    // Вивід шифрованого тексту у бінарному вигляді (для перевірки)
+    std::cout << "binartextSHIFR:" << std::endl;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            std::bitset<16> binary(rez[i][j]);
+            std::cout << binary << std::endl;
+        }
+    }
+
+    return 0;
+    return 0;
 }
